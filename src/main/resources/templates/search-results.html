@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Search Results - Lost & Found Board</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .navbar-brand {
+            font-weight: bold;
+        }
+        .card-img-top {
+            height: 200px;
+            object-fit: cover;
+        }
+        .item-card {
+            transition: transform 0.2s;
+        }
+        .item-card:hover {
+            transform: translateY(-5px);
+        }
+        .status-badge {
+            font-size: 0.8em;
+        }
+        .search-form {
+            background-color: #f8f9fa;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+        }
+    </style>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
+        <div class="container">
+            <a class="navbar-brand" href="/">
+                <i class="fas fa-search-location"></i> Lost & Found Board
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse" id="navbarNav">
+                <ul class="navbar-nav me-auto">
+                    <li class="nav-item">
+                        <a class="nav-link" href="/">Home</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/post-item">Post Item</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="/search">Search</a>
+                    </li>
+                </ul>
+                <ul class="navbar-nav">
+                    <li class="nav-item" th:if="${#authentication.isAuthenticated()}">
+                        <a class="nav-link" href="/profile">Profile</a>
+                    </li>
+                    <li class="nav-item" th:if="${#authentication.isAuthenticated()}">
+                        <a class="nav-link" href="/my-items">My Items</a>
+                    </li>
+                    <li class="nav-item" th:if="${#authentication.isAuthenticated()}">
+                        <form th:action="@{/logout}" method="post" class="d-inline">
+                            <button type="submit" class="btn btn-outline-light btn-sm">Logout</button>
+                        </form>
+                    </li>
+                    <li class="nav-item" th:unless="${#authentication.isAuthenticated()}">
+                        <a class="nav-link" href="/login">Login</a>
+                    </li>
+                    <li class="nav-item" th:unless="${#authentication.isAuthenticated()}">
+                        <a class="nav-link" href="/register">Register</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="container mt-4">
+        <!-- Flash Messages -->
+        <div th:if="${success}" class="alert alert-success alert-dismissible fade show" role="alert">
+            <i class="fas fa-check-circle"></i> <span th:text="${success}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <div th:if="${error}" class="alert alert-danger alert-dismissible fade show" role="alert">
+            <i class="fas fa-exclamation-circle"></i> <span th:text="${error}"></span>
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
+        <!-- Search Form -->
+        <div class="search-form">
+            <form th:action="@{/search}" method="get" class="row g-3">
+                <div class="col-md-4">
+                    <input type="text" name="keyword" class="form-control" placeholder="Search items..." th:value="${keyword}">
+                </div>
+                <div class="col-md-3">
+                    <select name="status" class="form-select">
+                        <option value="">All Status</option>
+                        <option value="LOST" th:selected="${status == 'LOST'}">Lost</option>
+                        <option value="FOUND" th:selected="${status == 'FOUND'}">Found</option>
+                    </select>
+                </div>
+                <div class="col-md-3">
+                    <input type="text" name="category" class="form-control" placeholder="Category" th:value="${category}">
+                </div>
+                <div class="col-md-2">
+                    <button type="submit" class="btn btn-primary w-100">
+                        <i class="fas fa-search"></i> Search
+                    </button>
+                </div>
+            </form>
+        </div>
+
+        <!-- Search Results Header -->
+        <div class="row mb-4">
+            <div class="col-12">
+                <h3>
+                    <i class="fas fa-search"></i> Search Results
+                    <span class="badge bg-secondary" th:text="${items != null ? items.size() : 0}">0</span>
+                </h3>
+                <p class="text-muted" th:if="${keyword != null and !keyword.isEmpty()}">
+                    Results for: "<span th:text="${keyword}"></span>"
+                    <span th:if="${status != null and !status.isEmpty()}"> • Status: <span th:text="${status}"></span></span>
+                    <span th:if="${category != null and !category.isEmpty()}"> • Category: <span th:text="${category}"></span></span>
+                </p>
+            </div>
+        </div>
+
+        <!-- Items Grid -->
+        <div class="row" th:if="${items != null and !items.isEmpty()}">
+            <div class="col-md-6 col-lg-4 mb-4" th:each="item : ${items}">
+                <div class="card item-card h-100">
+                    <div th:if="${item.imagePath != null}">
+                        <img th:src="@{'/uploads/' + ${item.imagePath}}" 
+                             class="card-img-top" 
+                             th:alt="${item.title}"
+                             onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='">
+                    </div>
+                    <div th:unless="${item.imagePath != null}" class="card-img-top bg-light d-flex align-items-center justify-content-center">
+                        <i class="fas fa-image fa-3x text-muted"></i>
+                    </div>
+                    <div class="card-body d-flex flex-column">
+                        <h5 class="card-title" th:text="${item.title}">Item Title</h5>
+                        <p class="card-text flex-grow-1" th:text="${#strings.abbreviate(item.description, 100)}">Item description...</p>
+                        <div class="mt-auto">
+                            <span class="badge status-badge" 
+                                  th:classappend="${item.status.name() == 'LOST'} ? 'bg-danger' : 'bg-success'"
+                                  th:text="${item.status.name()}">STATUS</span>
+                            <span class="badge bg-secondary status-badge ms-1" th:text="${item.category}">Category</span>
+                            <small class="text-muted d-block mt-2">
+                                <i class="fas fa-user"></i> <span th:text="${item.user.username}">User</span> • 
+                                <i class="fas fa-clock"></i> <span th:text="${#temporals.format(item.createdAt, 'MMM dd, yyyy')}">Date</span>
+                            </small>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- No Results Message -->
+        <div class="row" th:if="${items == null or items.isEmpty()}">
+            <div class="col-12">
+                <div class="alert alert-warning text-center">
+                    <i class="fas fa-search fa-2x mb-3"></i>
+                    <h4>No items found</h4>
+                    <p class="mb-0">
+                        <span th:if="${keyword != null and !keyword.isEmpty()}">
+                            No items match your search criteria. Try different keywords or filters.
+                        </span>
+                        <span th:unless="${keyword != null and !keyword.isEmpty()}">
+                            No items have been posted yet. Be the first to <a href="/post-item" class="alert-link">post an item</a>!
+                        </span>
+                    </p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Back to Home -->
+        <div class="row">
+            <div class="col-12 text-center">
+                <a href="/" class="btn btn-outline-primary">
+                    <i class="fas fa-home"></i> Back to Home
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-light mt-5 py-4">
+        <div class="container text-center">
+            <p class="text-muted mb-0">&copy; 2024 Community Lost & Found Board. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"></script>
+</body>
+</html>
