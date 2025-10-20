@@ -21,6 +21,22 @@
         <java.version>17</java.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <!-- This section forces all libraries to use the OkHttp version compatible with Spring Boot -->
+            <dependency>
+                <groupId>com.squareup.okhttp3</groupId>
+                <artifactId>okhttp</artifactId>
+                <version>4.12.0</version>
+            </dependency>
+            <dependency>
+                <groupId>com.squareup.okio</groupId>
+                <artifactId>okio</artifactId>
+                <version>3.6.0</version>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <!-- Web, JPA, Security, Thymeleaf -->
         <dependency>
@@ -70,7 +86,7 @@
         </dependency>
     </dependencies>
 
-    <!-- This new section tells Maven where to find the ImageKit library -->
+    <!-- This section tells Maven where to find the ImageKit library -->
     <repositories>
         <repository>
             <id>jitpack.io</id>
