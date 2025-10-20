@@ -15,11 +15,20 @@
   <artifactId>lost-and-found</artifactId>
   <version>0.0.1-SNAPSHOT</version>
   <name>lost-and-found</name>
+  <!-- THIS IS THE FIX: Replaced '&' with its XML-safe equivalent '&amp;' -->
   <description>Community Lost &amp; Found Board</description>
 
   <properties>
     <java.version>17</java.version>
   </properties>
+
+  <!-- Tells Maven where to find the ImageKit library -->
+  <repositories>
+      <repository>
+          <id>jitpack.io</id>
+          <url>https://jitpack.io</url>
+      </repository>
+  </repositories>
 
   <dependencies>
     <!-- Web, JPA, Security, Thymeleaf -->
@@ -61,6 +70,13 @@
       <artifactId>h2</artifactId>
       <scope>runtime</scope>
     </dependency>
+
+    <!-- The correct dependency for ImageKit from JitPack -->
+    <dependency>
+        <groupId>com.github.imagekit-developer</groupId>
+        <artifactId>imagekit-java</artifactId>
+        <version>2.0.1</version>
+    </dependency>
   </dependencies>
 
   <build>
@@ -72,3 +88,4 @@
     </plugins>
   </build>
 </project>
+

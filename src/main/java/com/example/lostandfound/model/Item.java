@@ -1,11 +1,22 @@
 package com.example.lostandfound.model;
 
-import jakarta.persistence.*;
+import java.time.LocalDateTime;
+
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.EnumType;
+import jakarta.persistence.Enumerated;
+import jakarta.persistence.FetchType;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.JoinColumn;
+import jakarta.persistence.ManyToOne;
+import jakarta.persistence.PreUpdate;
+import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
-
-import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "items")
@@ -37,6 +48,9 @@ public class Item {
     
     @Column(name = "image_path")
     private String imagePath;
+
+    @Column(name = "image_file_id")
+    private String imageFileId;
     
     @Column(name = "created_at")
     private LocalDateTime createdAt;
@@ -110,6 +124,14 @@ public class Item {
     
     public void setImagePath(String imagePath) {
         this.imagePath = imagePath;
+    }
+
+    public String getImageFileId() {
+        return imageFileId;
+    }
+
+    public void setImageFileId(String imageFileId) {
+        this.imageFileId = imageFileId;
     }
     
     public LocalDateTime getCreatedAt() {
