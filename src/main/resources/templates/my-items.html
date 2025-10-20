@@ -96,7 +96,8 @@
             <div class="col-md-6 col-lg-4 mb-4" th:each="item : ${items}">
                 <div class="card item-card h-100">
                     <div th:if="${item.imagePath != null}">
-                        <img th:src="@{'/uploads/' + ${item.imagePath}}" 
+                        <!-- THIS IS THE FIX: Changed th:src to use the direct URL -->
+                        <img th:src="${item.imagePath}" 
                              class="card-img-top" 
                              th:alt="${item.title}"
                              onerror="this.src='data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMjAwIiBoZWlnaHQ9IjIwMCIgeG1sbnM9Imh0dHA6Ly93d3cudzMub3JnLzIwMDAvc3ZnIj48cmVjdCB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiBmaWxsPSIjZGRkIi8+PHRleHQgeD0iNTAlIiB5PSI1MCUiIGZvbnQtZmFtaWx5PSJBcmlhbCIgZm9udC1zaXplPSIxNCIgZmlsbD0iIzk5OSIgdGV4dC1hbmNob3I9Im1pZGRsZSIgZHk9Ii4zZW0iPk5vIEltYWdlPC90ZXh0Pjwvc3ZnPg=='">
